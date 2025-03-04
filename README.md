@@ -1,10 +1,10 @@
 # Important Dates
 
-Training Data Published: 10 March
-Extra Evaluation Codabench: 10 March
-Test Data Published: 2 April
-Submission Deadline: 4 April
-Presentations: 1 May
+- Training Data Published: 10 March
+- Extra Evaluation Codabench: 10 March
+- Test Data Published: 2 April
+- Submission Deadline: 4 April
+- Presentations: 1 May
 
 # Important Notes About Markschemes 
 
