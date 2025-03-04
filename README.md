@@ -12,7 +12,7 @@
     - Quality of Predictions: 10%
     - Documentation/Organisation: 5%
     - Completeness/Reproducibility: 5%
-    - Techincally Sound COde: 10%
+    - Techincally Sound Code: 10%
     - Creative Approach: 10%
     - Evaluting our implementation: 5%
 
@@ -30,3 +30,4 @@
             - Code works "out of the box": 10%
             - QA answers: 10%
 
+Only 10% is on the prediction quality, we should focus on the creativeness/code quality and the Presentation, Model Card and Poster.
