@@ -31,3 +31,7 @@
             - QA answers: 10%
 
 Only 10% is on the prediction quality, we should focus on the creativeness/code quality and the Presentation, Model Card and Poster.
+
+# To Do List
+- [] Load dataset (PyTorch)
+- [] 
