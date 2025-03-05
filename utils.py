@@ -9,8 +9,8 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 class NLUDataset(Dataset):
-    VOCAB_SIZE = 10000
-    ENTRY_LENGTH = 128
+    VOCAB_SIZE = 10000  # Can adjust these variables whenever - these are placeholders
+    SEQ_LEN = 128
 
     def __init__(self, csv_file: str, transform=None):
         '''
@@ -22,7 +22,7 @@ class NLUDataset(Dataset):
             Read data csv
             Preprocess data (lemmatisation etc.)
             Build the vocabulary (see above for max VOCAB_SIZE)
-            Encode the data (convert words to indices, pad to ENTRY_LENGTH, removes end if too long)
+            Encode the data (convert words to indices, pad to SEQ_LEN, removes end if too long)
         '''
         data = pd.read_csv(csv_file)
         # Apply preprocessing to columns 0 and 1
@@ -144,10 +144,10 @@ class NLUDataset(Dataset):
                 Return the tensor
             '''
             encoded = [self.vocabulary.get(word, self.vocabulary["<UNK>"]) for word in sent]
-            while len(encoded) < self.ENTRY_LENGTH:
+            while len(encoded) < self.SEQ_LEN:
                 encoded.append(self.vocabulary["<PAD>"])
-            if len(encoded) > self.ENTRY_LENGTH:
-                encoded = encoded[:self.ENTRY_LENGTH]
+            if len(encoded) > self.SEQ_LEN:
+                encoded = encoded[:self.SEQ_LEN]
             encoded_tensor = torch.tensor(encoded, dtype=torch.float)
             return encoded_tensor
 
