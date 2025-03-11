@@ -175,6 +175,9 @@ def get_dataloader(dataset: NLUDataset, batch_size: int, shuffle: bool) -> DataL
 import nltk
 def preprocess_line(line: str, params: set) -> list[str]:
     
+    if "trim email" in params: #stub code for now
+        ...
+    
     tokens = nltk.tokenize.word_tokenize(line)
     operations = {
         "stop words": lambda tokens: [token for token in tokens if token.lower() not in nltk.corpus.stopwords.words('english')],
