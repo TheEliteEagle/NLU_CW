@@ -176,7 +176,7 @@ import nltk
 def preprocess_line(line: str, params: set) -> list[str]:
     
     if "trim email" in params: #stub code for now
-        ...
+        line = detect_and_trim_emails(line)
     
     tokens = nltk.tokenize.word_tokenize(line)
     operations = {
@@ -193,3 +193,19 @@ def preprocess_line(line: str, params: set) -> list[str]:
             tokens = action(tokens)
     
     return tokens
+
+def detect_and_trim_emails(line: str):
+    
+    '''
+    If line contains an email, trims out the email header
+    some emails have text before the email starts e.g "look at this  ----- Forwarded by..." with variable numbers of -
+    some emails cut off before reaching the subject
+    '''
+
+    if "-- Forwarded by" in line:
+        before_email = line.split("-")[0].strip()
+        email = "-" + line.split("-", 1)[1] if "-" in line else ""
+        email_subject = email.split("Subject:")[-1].strip() # if theres no subject, this keeps the whole email
+        line = before_email + " " + email_subject
+        line = line.strip()
+    return line
