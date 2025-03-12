@@ -4,7 +4,7 @@
 '''
 
 import pandas as pd
-
+import nltk
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -12,7 +12,7 @@ class NLUDataset(Dataset):
     VOCAB_SIZE = 10000  # Can adjust these variables whenever - these are placeholders
     SEQ_LEN = 128
 
-    def __init__(self, csv_file: str, transform=None):
+    def __init__(self, csv_file: str, transform=None, preprocessing_params:set = None):
         '''
         Initialises the dataset
         :param csv_file:
@@ -26,7 +26,7 @@ class NLUDataset(Dataset):
         '''
         data = pd.read_csv(csv_file)
         # Apply preprocessing to columns 0 and 1
-        data = data.apply(lambda x: self.preprocess_row(x), axis=1)
+        data = data.apply(lambda x: self.preprocess_row(x, preprocessing_params), axis=1)
         self.vocabulary = self.build_vocab(data)
         self.encodings = self.encode_data(data)
         self.transform = transform
@@ -56,7 +56,7 @@ class NLUDataset(Dataset):
         label = self.encodings[idx]["label"]
         return sentence_1, sentence_2, label
 
-    def preprocess_row(self, row: pd.Series) -> pd.Series:
+    def preprocess_row(self, row: pd.Series, preprocessing_params:set) -> pd.Series:
         '''
         Preprocesses a row of the dataframe
         :param row:
@@ -67,8 +67,10 @@ class NLUDataset(Dataset):
         label = row["label"]
 
         def preprocess_sent(sent: str) -> list[str]:
-            # Stub for Max
-            return sent.split()
+
+            # call external functions
+            processed_tokens = preprocess_line(sent, preprocessing_params)
+            return processed_tokens
 
         return pd.Series([preprocess_sent(sentence_1), preprocess_sent(sentence_2), label])
 
@@ -164,11 +166,48 @@ class NLUDataset(Dataset):
 
         return new_ds
 
-def get_dataset(csv_file: str) -> NLUDataset:
-    return NLUDataset(csv_file)
+def get_dataset(csv_file: str, preprocessing_params:set = None) -> NLUDataset:
+    return NLUDataset(csv_file, preprocessing_params=preprocessing_params)
 
 def get_dataloader(dataset: NLUDataset, batch_size: int, shuffle: bool) -> DataLoader:
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 def get_df(csv_file: str) -> pd.DataFrame:
     return pd.read_csv(csv_file)
+
+def preprocess_line(line: str, params: set) -> list[str]:
+    
+    if "trim email" in params: #stub code for now
+        line = detect_and_trim_emails(line)
+    
+    tokens = nltk.tokenize.word_tokenize(line)
+    operations = {
+        "stop words": lambda tokens: [token for token in tokens if token.lower() not in nltk.corpus.stopwords.words('english')],
+        "stem": lambda tokens: [nltk.PorterStemmer().stem(token) for token in tokens],
+        "lemmatise": lambda tokens: [nltk.WordNetLemmatizer().lemmatize(token) for token in tokens],
+        "alphanumeric": lambda tokens: [token for token in tokens if token.isalnum()],
+        "lowercase": lambda tokens: [token.lower() for token in tokens]
+    }
+
+    # Apply each operation if we define it in the params set
+    for key, action in operations.items():
+        if key in params:
+            tokens = action(tokens)
+    
+    return tokens
+
+def detect_and_trim_emails(line: str):
+    
+    '''
+    If line contains an email, trims out the email header
+    some emails have text before the email starts e.g "look at this  ----- Forwarded by..." with variable numbers of -
+    some emails cut off before reaching the subject
+    '''
+
+    if "-- Forwarded by" in line:
+        before_email = line.split("-")[0].strip()
+        email = "-" + line.split("-", 1)[1] if "-" in line else ""
+        email_subject = email.split("Subject:")[-1].strip() # if theres no subject, this keeps the whole email
+        line = before_email + " " + email_subject
+        line = line.strip()
+    return line

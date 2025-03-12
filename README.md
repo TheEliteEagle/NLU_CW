@@ -34,7 +34,8 @@ Only 10% is on the prediction quality, we should focus on the creativeness/code 
 
 # To Do List
 - [x] Load dataset (PyTorch) (Ben)
-- [ ] Preprocessing (e.g. lemmatisation) (Max)
+- [x] Preprocessing (e.g. lemmatisation) (Max)
 - [ ] Look into unsupervised learning (hand-written rules) (Ben)
 - [ ] Look into DL with Transformers (Max)
+- [x] Detect if line is a email, and remove header (Max)
 - [ ] Find best way to encode the data
