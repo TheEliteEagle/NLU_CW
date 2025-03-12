@@ -4,7 +4,7 @@
 '''
 
 import pandas as pd
-
+import nltk
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -172,7 +172,9 @@ def get_dataset(csv_file: str, preprocessing_params:set = None) -> NLUDataset:
 def get_dataloader(dataset: NLUDataset, batch_size: int, shuffle: bool) -> DataLoader:
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
-import nltk
+def get_df(csv_file: str) -> pd.DataFrame:
+    return pd.read_csv(csv_file)
+
 def preprocess_line(line: str, params: set) -> list[str]:
     
     if "trim email" in params: #stub code for now
