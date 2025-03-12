@@ -35,7 +35,9 @@ Only 10% is on the prediction quality, we should focus on the creativeness/code 
 # To Do List
 - [x] Load dataset (PyTorch) (Ben)
 - [x] Preprocessing (e.g. lemmatisation) (Max)
-- [ ] Look into unsupervised learning (hand-written rules) (Ben)
-- [ ] Look into DL with Transformers (Max)
+- [x] Look into unsupervised learning (hand-written rules) (Ben)
+- [x] Look into DL with Transformers (Max)
 - [x] Detect if line is a email, and remove header (Max)
 - [ ] Find best way to encode the data
+- [ ] Implement either basic transformer or RNN model (Max)
+- [ ] Finish feature vector, and attempt clustering (Ben)

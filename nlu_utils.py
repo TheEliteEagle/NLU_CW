@@ -17,16 +17,21 @@ class NLUDataset(Dataset):
         Initialises the dataset
         :param csv_file:
         :param transform: (not used at the moment, there for later)
+        :param preprocessing_params: set
 
         Program flow:
             Read data csv
-            Preprocess data (lemmatisation etc.)
+            Preprocess data (lemmatisation etc.), using preprocessing_params
             Build the vocabulary (see above for max VOCAB_SIZE)
             Encode the data (convert words to indices, pad to SEQ_LEN, removes end if too long)
         '''
         data = pd.read_csv(csv_file)
         # Apply preprocessing to columns 0 and 1
-        data = data.apply(lambda x: self.preprocess_row(x, preprocessing_params), axis=1)
+        # If preprocessing_params is None, then no preprocessing is done
+
+        if preprocessing_params is not None:
+            data = data.apply(lambda x: self.preprocess_row(x, preprocessing_params), axis=1)
+
         self.vocabulary = self.build_vocab(data)
         self.encodings = self.encode_data(data)
         self.transform = transform
@@ -66,13 +71,10 @@ class NLUDataset(Dataset):
         sentence_2 = row["text_2"]
         label = row["label"]
 
-        def preprocess_sent(sent: str) -> list[str]:
+        processed_sent1 = preprocess_line(sentence_1, preprocessing_params)
+        processed_sent2 = preprocess_line(sentence_2, preprocessing_params)
 
-            # call external functions
-            processed_tokens = preprocess_line(sent, preprocessing_params)
-            return processed_tokens
-
-        return pd.Series([preprocess_sent(sentence_1), preprocess_sent(sentence_2), label])
+        return pd.Series([processed_sent1, processed_sent2, label])
 
     def build_vocab(self, data) -> dict:
         '''
@@ -169,14 +171,31 @@ class NLUDataset(Dataset):
 def get_dataset(csv_file: str, preprocessing_params:set = None) -> NLUDataset:
     return NLUDataset(csv_file, preprocessing_params=preprocessing_params)
 
-def get_dataloader(dataset: NLUDataset, batch_size: int, shuffle: bool) -> DataLoader:
+def get_dataloader(dataset: NLUDataset, batch_size: int = 1, shuffle: bool = False) -> DataLoader:
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 def get_df(csv_file: str) -> pd.DataFrame:
     return pd.read_csv(csv_file)
 
 def preprocess_line(line: str, params: set) -> list[str]:
-    
+    '''
+    Preprocesses a line of text
+
+    :param line:
+    :param params:
+    :return:
+
+    Program flow:
+        If the line contains an email, trims out the email header
+        Tokenises the line
+        Applies various transformations
+            Removes stop words
+            Stems
+            Lemmatises
+            Remvoes non-alphanumeric characters
+            Sets all lowercase
+        Returns the list of tokens
+    '''
     if "trim email" in params: #stub code for now
         line = detect_and_trim_emails(line)
     
@@ -197,11 +216,13 @@ def preprocess_line(line: str, params: set) -> list[str]:
     return tokens
 
 def detect_and_trim_emails(line: str):
-    
     '''
     If line contains an email, trims out the email header
     some emails have text before the email starts e.g "look at this  ----- Forwarded by..." with variable numbers of -
     some emails cut off before reaching the subject
+
+    :param line:
+    :return: line with email header trimmed
     '''
 
     if "-- Forwarded by" in line:

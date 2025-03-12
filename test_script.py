@@ -1,5 +1,11 @@
-import torch
+import nlu_utils
 
-test_list = [1, 2, 3, 4, 5]
-print(test_list)
-print(torch.FloatTensor(test_list))
+data_path = "./Data/train.csv"
+ds = nlu_utils.get_dataset(data_path)
+dl = nlu_utils.get_dataloader(ds, batch_size=1, shuffle=False)
+
+for s1, s2, label in dl:
+    print(s1)
+    print(s2)
+    print(label)
+    break
