@@ -12,9 +12,9 @@
     - Quality of Predictions: 10%
     - Documentation/Organisation: 5%
     - Completeness/Reproducibility: 5%
-    - Techincally Sound Code: 10%
+    - Technically Sound Code: 10%
     - Creative Approach: 10%
-    - Evaluting our implementation: 5%
+    - Evaluating our implementation: 5%
 
 - **Presentation: 55%**
     - Model Card: 20%

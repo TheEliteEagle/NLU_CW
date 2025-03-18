@@ -2,10 +2,11 @@
     The main file for common functions between the two solutions. This comprises mainly the loading, transformation,
     and conversion of the data (to a PyTorch DataLoader/Dataset)
 '''
-
+import numpy as np
 import pandas as pd
 import nltk
 import torch
+from torch import Tensor
 from torch.utils.data import Dataset, DataLoader
 
 class NLUDataset(Dataset):
@@ -168,10 +169,93 @@ class NLUDataset(Dataset):
 
         return new_ds
 
+class UnencodedNLUDataset(Dataset):
+    '''
+    "Clean" dataset
+    Not preprocessed nor encoded
+    Used for Solution 1 as capitalisations etc. are vital
+    '''
+
+    VOCAB_SIZE = 10000  # Can adjust these variables whenever - these are placeholders
+    SEQ_LEN = 128
+
+    def __init__(self, data: pd.DataFrame, transform=None):
+        self.data = data
+        self.transform = transform
+
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __getitem__(self, idx: int) -> tuple[str, str, int]:
+        return self.data.iloc[idx, 0], self.data.iloc[idx, 1], self.data.iloc[idx, 2]
+
+    def build_vocab(self, data) -> dict:
+        word_freq_dict = {}
+        for i in range(len(data)):
+            for j in range(2):
+                for word in data.iloc[i, j]:
+                    if word in word_freq_dict:
+                        word_freq_dict[word] += 1
+                    else:
+                        word_freq_dict[word] = 1
+
+        word_freq_list = sorted(word_freq_dict.items(), key=lambda x: x[1], reverse=True)
+
+        if len(word_freq_list) > self.VOCAB_SIZE:
+            word_freq_list = word_freq_list[:self.VOCAB_SIZE]
+
+        vocab_dict = {word_freq_list[i][0]: i for i in range(len(word_freq_list))}
+
+        vocab_dict["<PAD>"] = len(vocab_dict)
+        vocab_dict["<UNK>"] = len(vocab_dict)
+        vocab_dict["<SOS>"] = len(vocab_dict)
+        vocab_dict["<EOS>"] = len(vocab_dict)
+
+        return vocab_dict
+
+class FeatureVectorDataset(Dataset):
+    '''
+    Dataset for the feature vectors
+    Incredibly basic - maybe more added later
+    '''
+
+    def __init__(self, data: pd.DataFrame, transform=None):
+        self.fv_size = (len(data.columns) - 1) // 2
+        self.data = self.convert_to_tensors(data)
+        self.transform = transform
+
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        return self.data[idx][0], self.data[idx][1], self.data[idx][2]
+
+    def convert_to_tensors(self, data: pd.DataFrame) -> list[list[Tensor]]:
+        '''
+        Converts the data to tensors
+        :param data:
+        :return: s1, s2, label
+
+        s1: torch.Tensor
+            The first sentence
+        s2: torch.Tensor
+            The second sentence
+        label: torch.Tensor
+            The label
+        '''
+        fv_1 = torch.tensor(data.iloc[:, :self.fv_size].values, dtype=torch.float)
+        fv_2 = torch.tensor(data.iloc[:, self.fv_size:-1].values, dtype=torch.float)
+        # make labels have tensor of size (1, 1) instead of (1,)
+        labels = torch.tensor(data.iloc[:, -1].values, dtype=torch.float).unsqueeze(1)
+        ret_list = []
+        for i in range(len(data)):
+            ret_list.append([fv_1[i], fv_2[i], labels[i]])
+        return ret_list
+
 def get_dataset(csv_file: str, preprocessing_params:set = None) -> NLUDataset:
     return NLUDataset(csv_file, preprocessing_params=preprocessing_params)
 
-def get_dataloader(dataset: NLUDataset, batch_size: int = 1, shuffle: bool = False) -> DataLoader:
+def get_dataloader(dataset: Dataset, batch_size: int = 1, shuffle: bool = False) -> DataLoader:
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 def get_df(csv_file: str) -> pd.DataFrame:
@@ -228,7 +312,15 @@ def detect_and_trim_emails(line: str):
     if "-- Forwarded by" in line:
         before_email = line.split("-")[0].strip()
         email = "-" + line.split("-", 1)[1] if "-" in line else ""
-        email_subject = email.split("Subject:")[-1].strip() # if theres no subject, this keeps the whole email
+        email_subject = email.split("Subject:")[-1].strip() # if there's no subject, this keeps the whole email
         line = before_email + " " + email_subject
         line = line.strip()
     return line
+
+def get_clean_dataset(df: pd.DataFrame) -> UnencodedNLUDataset:
+    return UnencodedNLUDataset(df)
+
+def get_feat_dataset(df: pd.DataFrame, test_split: float = 0.9) -> tuple[FeatureVectorDataset, FeatureVectorDataset]:
+    train_df = df.sample(frac=test_split)
+    test_df = df.drop(train_df.index)
+    return FeatureVectorDataset(train_df), FeatureVectorDataset(test_df)
