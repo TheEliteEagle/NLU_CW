@@ -1,0 +1,10 @@
+
+try pre-processing parameters
+add GPU support
+add more layers than just the classifier
+add .eval() to roberta to see if training time improves
+
+time for N=100
+Tensors: 8m
+Training: 8m 
+(same time training and getting tensors for any N)
