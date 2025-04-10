@@ -9,7 +9,7 @@ repo: https://github.com/TheEliteEagle/NLU_CW
 
 ---
 
-# Model Card for f08473bh-e27772mb-AV
+# Model Card for f08473b-e27772mb-AV
 
 <!-- Provide a quick summary of what the model is/does. -->
 
@@ -23,8 +23,7 @@ This is a classification model that was trained to
 
 <!-- Provide a longer summary of what this model is. -->
 
-This model is based upon a BERT model that was fine-tuned
-      on 30K pairs of texts.
+This model has two parts: the MPNet base (a pretrained LLM) and the overlying classifier (an MLP).
 
 - **Developed by:** Benjamin Hatton and Max Bolt
 - **Language(s):** English
@@ -36,8 +35,8 @@ This model is based upon a BERT model that was fine-tuned
 
 <!-- Provide links where applicable. -->
 
-- **Repository:** https://huggingface.co/google-bert/bert-base-uncased
-- **Paper or documentation:** https://aclanthology.org/N19-1423.pdf
+- **Repository:** https://huggingface.co/sentence-transformers/all-mpnet-base-v2
+- **Paper or documentation:** https://arxiv.org/pdf/2004.09297
 
 ## Training Details
 
@@ -45,7 +44,7 @@ This model is based upon a BERT model that was fine-tuned
 
 <!-- This is a short stub of information on the training data that was used, and documentation related to data pre-processing or additional filtering (if applicable). -->
 
-30K pairs of texts drawn from emails, news articles and blog posts.
+27K pairs of text each with a label of 1 or 0 to denote whether it was written by the same person or not (respectively).
 
 ### Training Procedure
 
@@ -56,9 +55,9 @@ This model is based upon a BERT model that was fine-tuned
 <!-- This is a summary of the values of hyperparameters used in training the model. -->
 
 
-      - learning_rate: 2e-05
-      - train_batch_size: 16
-      - eval_batch_size: 16
+      - learning_rate: 1e-03
+      - train_batch_size: 32
+      - eval_batch_size: 1
       - seed: 42
       - num_epochs: 10
 
@@ -81,7 +80,7 @@ This model is based upon a BERT model that was fine-tuned
 
 <!-- This should describe any evaluation data used (e.g., the development/validation set provided). -->
 
-A subset of the development set provided, amounting to 2K pairs.
+Around 6K text pairs provided within the task.
 
 #### Metrics
 
