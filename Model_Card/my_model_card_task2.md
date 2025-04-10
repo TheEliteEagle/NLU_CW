@@ -23,13 +23,13 @@ This is a classification model that was trained to
 
 <!-- Provide a longer summary of what this model is. -->
 
-This model has two parts: the MPNet base (a pretrained LLM) and the overlying classifier (an MLP).
+This model has two parts: the MPNet base (a pretrained LLM) and an ensemble of binary classifiers.
 
 - **Developed by:** Benjamin Hatton and Max Bolt
 - **Language(s):** English
 - **Model type:** Supervised
-- **Model architecture:** Transformers
-- **Finetuned from model [optional]:** bert-base-uncased
+- **Model architecture:** Deep-learning ensemble
+- **Finetuned from model [optional]:** all-mpnet-base-v2
 
 ### Model Resources
 
@@ -55,20 +55,21 @@ This model has two parts: the MPNet base (a pretrained LLM) and the overlying cl
 <!-- This is a summary of the values of hyperparameters used in training the model. -->
 
 
+      - children: 5
       - learning_rate: 1e-03
-      - train_batch_size: 32
+      - train_batch_size: 64
       - eval_batch_size: 1
       - seed: 42
-      - num_epochs: 10
+      - num_epochs: 40
 
 #### Speeds, Sizes, Times
 
 <!-- This section provides information about how roughly how long it takes to train the model and the size of the resulting model. -->
 
 
-      - overall training time: 5 hours
-      - duration per training epoch: 30 minutes
-      - model size: 300MB
+      - overall training time: 20 minutes
+      - duration per training epoch: 0.5 minutes
+      - model size: 72mb
 
 ## Evaluation
 
@@ -87,21 +88,21 @@ Around 6K text pairs provided within the task.
 <!-- These are the evaluation metrics being used. -->
 
 
-      - Precision
-      - Recall
-      - F1-score
-      - Accuracy
+      - Precision: 0.68
+      - Recall: 0.67
+      - F1-score: 0.68
+      - Accuracy: 0.68
 
 ### Results
 
-The model obtained an F1-score of 67% and an accuracy of 70%.
+The model obtained an F1-score of 68% and an accuracy of 67%.
 
 ## Technical Specifications
 
 ### Hardware
 
 
-      - RAM: at least 16 GB
+      - RAM: at least 8 GB
       - Storage: at least 2GB,
       - GPU: V100
 
