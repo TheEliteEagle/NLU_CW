@@ -1,43 +1,10 @@
-# Important Dates
+# How to run solution 1
 
-- Training Data Published: 10 March
-- Extra Evaluation Codabench: 10 March
-- Test Data Published: 2 April
-- Submission Deadline: 4 April
-- Presentations: 1 May
+BEN TODO
 
-# Important Notes About Markschemes 
+# How to run solution 2
 
-- **Implementation: 45%**
-    - Quality of Predictions: 10%
-    - Documentation/Organisation: 5%
-    - Completeness/Reproducibility: 5%
-    - Technically Sound Code: 10%
-    - Creative Approach: 10%
-    - Evaluating our implementation: 5%
+The notebooks parameters in the submitted version are already set to run in inference mode (see the flags set under the "Notebook engine" section which controls program control flow).
+All flags are set to false, so only function definitions and separate the demo block at the end will run.
 
-- **Presentation: 55%**
-    - Model Card: 20%
-        - Formatting: 5%
-        - Informativeness: 10%
-        - Accurate Representation: 5%
-    - Presentation: 35%
-        - Poster: 15%
-            - Content: 5%
-            - Aesthetics: 5%
-            - Explanation of poster in demo: 5%
-        - Demo session: 20%
-            - Code works "out of the box": 10%
-            - QA answers: 10%
-
-Only 10% is on the prediction quality, we should focus on the creativeness/code quality and the Presentation, Model Card and Poster.
-
-# To Do List
-- [x] Load dataset (PyTorch) (Ben)
-- [x] Preprocessing (e.g. lemmatisation) (Max)
-- [x] Look into unsupervised learning (hand-written rules) (Ben)
-- [x] Look into DL with Transformers (Max)
-- [x] Detect if line is a email, and remove header (Max)
-- [ ] Find best way to encode the data
-- [ ] Implement either basic transformer or RNN model (Max)
-- [ ] Finish feature vector, and attempt clustering (Ben)
+Further documentation is provided by comments at the top of the notebook detailing each section, and by comments in the code itself.
