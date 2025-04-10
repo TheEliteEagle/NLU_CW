@@ -23,7 +23,7 @@ This is a classification model that was trained to
 
 <!-- Provide a longer summary of what this model is. -->
 
-This model has two parts: the MPNet base (a pretrained LLM) and an ensemble of binary classifiers.
+This model has two parts: the MPNet base (a pretrained LLM) and an ensemble of binary classifiers. Each binary classifier has 3 layers, of 1024, 512 and 1, each with a Relu, Layernorm and Dropout layer between them.
 
 - **Developed by:** Benjamin Hatton and Max Bolt
 - **Language(s):** English
